@@ -1,0 +1,7 @@
+{
+  "name": "jasmine-mocks",
+  "version": "0.0.1",
+  "dependencies": {
+    "jasmine-node": "1.0.23"
+  }
+}
