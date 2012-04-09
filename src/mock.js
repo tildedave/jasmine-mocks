@@ -11,8 +11,18 @@ var mock = function (clazz) {
 
 var whenMatcher = function (args, value) {
   return {
-    matches: function (matchArgs) {
-      return args === matchArgs;
+    functionCallMatches: function (matchArgs) {
+      for(var i = 0, l = args.length; i < l; ++i) {
+        if (typeof args[i].matches === "function") {
+          if (!args[i].matches(matchArgs[i])) {
+            return false;
+          }
+        }
+        else if (matchArgs[i] !== args[i]) {
+          return false;
+        }
+      }
+      return true;
     },
     returnValue: value
   };
@@ -20,17 +30,21 @@ var whenMatcher = function (args, value) {
 
 var when = function (spy) {
   return {
-    isCalledWith: function (args) {
+    isCalledWith: function () {
+      var args = Array.prototype.slice.apply(arguments);
+
       return {
         thenReturn: function (value) {
-          if (!spy.jasmine_mock__installedMatchers) {
-            spy.jasmine_mock__installedMatchers = [];
-            spy.andCallFake(function (spyArgs) {
-              var matchers = spy.jasmine_mock__installedMatchers;
-              for (var i = 0, l = matchers.length; i < l; ++i) {
-                var matcher = matchers[i];
-                if (matcher.matches(spyArgs)) {
-                  return matcher.returnValue;
+          if (!spy.jasmine_mock__whenMatchers) {
+            spy.jasmine_mock__whenMatchers = [];
+            spy.andCallFake(function () {
+              var matchArgs = Array.prototype.slice.apply(arguments);
+              
+              var whenMatchers = spy.jasmine_mock__whenMatchers;
+              for (var i = 0, l = whenMatchers.length; i < l; ++i) {
+                var whenMatcher = whenMatchers[i];
+                if (whenMatcher.functionCallMatches(matchArgs)) {
+                  return whenMatcher.returnValue;
                 }
               }
 
@@ -38,17 +52,23 @@ var when = function (spy) {
             });
           }
 
-          spy.jasmine_mock__installedMatchers.push(
-            whenMatcher(args, value)
-          );
+          spy.jasmine_mock__whenMatchers.push(whenMatcher(args, value));
         }
       };
     }
   };
 };
 
-module.exports = {
-  mock: mock,
-  when: when
+var argThat = function (matchFunction) {
+  return {
+    matches: function (arg) {
+      return !!matchFunction.call(null, arg);
+    }
+  }; 
 };
 
+module.exports = {
+  mock: mock,
+  when: when,
+  argThat: argThat
+};

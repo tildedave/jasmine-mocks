@@ -55,10 +55,50 @@ describe('when', function () {
 
   it('installs multiple behaviors', function () {
     var instance = mock(Clazz);
+    
     when(instance.foo).isCalledWith(3).thenReturn("dog");
     when(instance.foo).isCalledWith(4).thenReturn("cat");
 
     expect(instance.foo(4)).toBe("cat");
     expect(instance.foo(3)).toBe("dog");
+  });
+
+  it('handles multiple arguments (positive)', function () {
+    var instance = mock(Clazz);
+
+    when(instance.foo).isCalledWith("one", "two").thenReturn("three");
+
+    expect(instance.foo("one", "two")).toBe("three");
+  });
+
+  it('handles multiple arguments (negative)', function () {
+    var instance = mock(Clazz);
+
+    when(instance.foo).isCalledWith("one", "two").thenReturn("three");
+
+    expect(instance.foo("one", "three")).toBeUndefined();
+  });
+});
+
+var argThat = require('../src/mock.js').argThat;
+
+describe('argThat', function () {
+
+  var Clazz;
+  
+  beforeEach(function () {
+    Clazz = function () { };
+    Clazz.prototype.foo = function () { };
+  });
+
+  it("handles argThat matchers", function () {
+    var instance = mock(Clazz);
+
+    when(instance.foo).isCalledWith(argThat(function (arg) {
+      return arg % 2 === 0;
+    })).thenReturn("woo");
+
+    expect(instance.foo(4)).toBe("woo");
+    expect(instance.foo(3)).toBe(undefined);    
   });
 });
