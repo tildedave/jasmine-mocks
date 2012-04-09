@@ -6,14 +6,30 @@ properties on the constructor function's prototype.
 Syntax:
 
 ```javascript
+mock = require('jasmine-mocks').mock;
+
 mockInstance = mock(Clazz);
 
 // mockInstance is now an object that contains every function on Clazz's
 // prototype as a spy
 
+when = require('jasmine-mocks').when;
+
 when(mockInstance.foo).isCalledWith("bar").thenReturn("baz");
 
 // any call to the foo spy with the string "bar" will return the string "baz"
+
+argThat = require('jasmine-mocks').argThat;
+
+var hasLength (n) = function () {
+  return function (arr) {
+    return (arr.length === n);
+  }
+};
+
+when(mockInstance.foo).isCalledWith(argThat(hasLength(3)).thenReturn("baz");
+
+// any call to foo with an array of length 3 will return the string "baz"
 ```
 
 # Why?
