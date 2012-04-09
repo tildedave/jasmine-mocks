@@ -1,4 +1,4 @@
-var mock = require('../src/mock.js').mock;
+var mock = require('../src/jasmine-mocks.js').mock;
 
 describe('mock', function () {
 
@@ -15,6 +15,14 @@ describe('mock', function () {
     mockInstance.foo();
 
     expect(mockInstance.foo).toHaveBeenCalled();
+  });
+
+  it('does not add spies for non-function members', function () {
+    Clazz.prototype.initialProperty = null;
+    
+    var mockInstance = mock(Clazz);
+
+    expect(mockInstance.initialProperty).toBe(null);
   });
 
   it('gives a meaningful name to a spy', function () {
@@ -35,7 +43,7 @@ describe('mock', function () {
   });
 });
 
-var when = require('../src/mock.js').when;
+var when = require('../src/jasmine-mocks.js').when;
 
 describe('when', function () {
 
@@ -80,7 +88,7 @@ describe('when', function () {
   });
 });
 
-var argThat = require('../src/mock.js').argThat;
+var argThat = require('../src/jasmine-mocks.js').argThat;
 
 describe('argThat', function () {
 
@@ -102,3 +110,10 @@ describe('argThat', function () {
     expect(instance.foo(3)).toBe(undefined);    
   });
 });
+
+
+
+
+
+
+

@@ -3,7 +3,9 @@ var jasmine = require('jasmine-node');
 var mock = function (clazz) {
   var instance = Object.create(clazz.prototype);
   for(var prop in instance) {
-    instance[prop] = jasmine.createSpy(prop);
+    if (typeof(instance[prop]) === "function") {
+      instance[prop] = jasmine.createSpy(prop);
+    }
   }
 
   return instance;
