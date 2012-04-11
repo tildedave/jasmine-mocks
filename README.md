@@ -32,6 +32,8 @@ when(mockInstance.foo).isCalledWith(argThat(hasLength(3)).thenReturn("baz");
 // any call to foo with an array of length 3 will return the string "baz"
 ```
 
+Still TODO: Mocks that inherit some "real" methods (i.e. EventEmitter).
+
 # Why?
 
 Jasmine is an excellent JavaScript unit testing framework.  However, if you use
