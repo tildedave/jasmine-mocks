@@ -13,6 +13,13 @@ mockInstance = mock(Clazz);
 // mockInstance is now an object that contains every function on Clazz's
 // prototype as a spy
 
+EventEmitter = require('events').EventEmitter;
+
+mockInstance = mock(Clazz, EventEmitter);
+
+// mockInstance is now an object that contains every function on Clazz's
+// prototype as a spy, and implements the real functionality of EventEmitter.
+
 when = require('jasmine-mocks').when;
 
 when(mockInstance.foo).isCalledWith("bar").thenReturn("baz");
@@ -108,6 +115,33 @@ describe('A', function () {
 This is a little better but still prone to problems.  If the definition of B
 changes all of our tests must be updated, and it requires a lot of duplicate
 boilerplate between tests.
+
+## Mocks That Can Emit Events
+
+If one object depends on another firing an event to trigger its own behavior,
+this leads to more awkwardness in setting up a mock object.
+
+This is an issue when using objects that fire events like Node's [events.EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter) or Closure's [goog.events.EventTarget](http://closure-library.googlecode.com/svn/docs/class_goog_events_EventTarget.html).
+
+```javascript
+describe('A', function () {
+  it('executes on C when an event is fired on B', function () {
+    var B = function () {};
+    B.prototype = Object.create(EventEmitter);
+
+    var b = new B();
+    var c = {
+      execute: jasmine.createSpy('execute')
+    }
+
+    var a = new A(b, c);
+
+    b.emit('event that A listens to');
+
+    expect(c.execute).toHaveBeenCalled();
+  });
+});
+```
 
 ## Matchers
 
