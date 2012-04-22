@@ -9,12 +9,13 @@ var jasmine = require('jasmine-node');
  *
  * Examples:
  *
- *    mock(Clazz);
- *    mock(Clazz, EventEmitter);
+ *   mock(Clazz);
+ *   mock(Clazz, EventEmitter);
  *
  * @public
  * @param {Function} clazz
  * @param {Function=} opt_base
+ * @return {Object}
  */
 var mock = function (clazz, opt_base) {
   var base = opt_base ? opt_base.prototype : {};
@@ -39,6 +40,10 @@ var mock = function (clazz, opt_base) {
   return instance;
 };
 
+/**
+ * Helper function for when.
+ * @private
+ */
 var whenMatcher = function (args, value) {
   return {
     functionCallMatches: function (matchArgs) {
@@ -58,12 +63,34 @@ var whenMatcher = function (args, value) {
   };
 };
 
+/**
+ * Define behavior of a mock function based on the arguments that are passed in.
+ *
+ * Examples:
+ *
+ *   when(money.getAmount).isCalledWith().thenReturn(5)
+ *   when(mockInstance.sayHello).isCalledWith('Dave').thenReturn('Hello Dave')
+ *
+ * @public
+ * @param {Function} spy Mock function to define behavior on.
+ */
 var when = function (spy) {
   return {
-    isCalledWith: function () {
+    /**
+     * @public
+     * @param {...*} var_args Arguments that are used to determine if a function
+     *   call matches.  These can be values or objects that contain a 'matches'
+     *   function.
+     */
+    isCalledWith: function (var_args) {
       var args = Array.prototype.slice.apply(arguments);
 
       return {
+        /**
+         * @public
+         * @param {Object} value Object to return when the function call matches
+         *   the arguments.
+         */
         thenReturn: function (value) {
           if (!spy.jasmine_mock__whenMatchers) {
             spy.jasmine_mock__whenMatchers = [];
@@ -89,6 +116,20 @@ var when = function (spy) {
   };
 };
 
+/**
+ * Returns a matcher that determines if an argument at this position matches.
+ * Primarily for use in a when() definition.
+ *
+ * Examples:
+ *
+ *   argThat(function (n) { return n % 2 === 0; })
+ *   argThat(function (str) { return str.indexOf('hello') != -1; })
+ *
+ * @public
+ * @param {function (Object, boolean)} matchFunction
+ * @return {{matches: function(Object, boolean)}}
+ *
+ */
 var argThat = function (matchFunction) {
   return {
     matches: function (arg) {
