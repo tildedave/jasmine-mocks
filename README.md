@@ -39,8 +39,6 @@ when(mockInstance.foo).isCalledWith(argThat(hasLength(3)).thenReturn("baz");
 // any call to foo with an array of length 3 will return the string "baz"
 ```
 
-Still TODO: Mocks that inherit some "real" methods (i.e. EventEmitter).
-
 # Why?
 
 Jasmine is an excellent JavaScript unit testing framework.  However, if you use
@@ -124,6 +122,13 @@ this leads to more awkwardness in setting up a mock object.
 This is an issue when using objects that fire events like Node's [events.EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter) or Closure's [goog.events.EventTarget](http://closure-library.googlecode.com/svn/docs/class_goog_events_EventTarget.html).
 
 ```javascript
+
+var A = function (b, c) {
+  b.on('event that A listens to', function () {
+    c.execute();
+  });
+};
+
 describe('A', function () {
   it('executes on C when an event is fired on B', function () {
     var B = function () {};
@@ -142,6 +147,11 @@ describe('A', function () {
   });
 });
 ```
+
+This is awkward and still relies on setting any extra properties on
+the source of the events.  Events are fundamental to JavaScript
+frameworks and firing/listening to an event on a mock should be as
+easy as calling a function already is.
 
 ## Matchers
 
