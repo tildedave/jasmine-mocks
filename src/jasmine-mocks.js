@@ -109,7 +109,19 @@ var when = function (spy) {
             });
           }
 
-          spy.jasmine_mock__whenMatchers.push(whenMatcher(args, value));
+          var alreadyArgs = false;
+          var whenMatchers = spy.jasmine_mock__whenMatchers;
+          for (var i = 0, l = whenMatchers.length; i < l; ++i) {
+            var currentMatcher = whenMatchers[i];
+            if (currentMatcher.functionCallMatches(args)) {
+              currentMatcher.returnValue = value;
+              alreadyArgs = true;
+            }
+          }
+
+          if (!alreadyArgs) {
+            spy.jasmine_mock__whenMatchers.push(whenMatcher(args, value));
+          }
         }
       };
     }
