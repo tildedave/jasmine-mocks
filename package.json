@@ -4,10 +4,8 @@
   "version": "0.0.2",
   "main": "dist/jasmine-mocks-node.js",
   "dependencies": {
-    "jasmine-node": "1.0.23"
+    "jasmine-node": "1.7.1"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-wrap": "~0.2.0"
   }
 }

@@ -83,6 +83,16 @@ var when = function (spy) {
     isCalledWith: function (var_args) {
       var args = Array.prototype.slice.apply(arguments);
 
+      var getMatchingWhenMatcher = function(args) {
+        var whenMatchers = spy.jasmine_mock__whenMatchers;
+        for (var i = 0, l = whenMatchers.length; i < l; ++i) {
+          var matchingWhenMatcher = whenMatchers[i];
+          if (matchingWhenMatcher.functionCallMatches(args)) {
+            return matchingWhenMatcher;
+          }
+        }
+      }
+
       return {
         /**
          * @public
@@ -95,19 +105,20 @@ var when = function (spy) {
             spy.andCallFake(function () {
               var matchArgs = Array.prototype.slice.apply(arguments);
 
-              var whenMatchers = spy.jasmine_mock__whenMatchers;
-              for (var i = 0, l = whenMatchers.length; i < l; ++i) {
-                var whenMatcher = whenMatchers[i];
-                if (whenMatcher.functionCallMatches(matchArgs)) {
-                  return whenMatcher.returnValue;
-                }
+              var matchingWhenMatcher = getMatchingWhenMatcher(matchArgs);
+              if (matchingWhenMatcher) {
+                return matchingWhenMatcher.returnValue;
               }
-
               return undefined;
             });
           }
 
-          spy.jasmine_mock__whenMatchers.push(whenMatcher(args, value));
+          var matchingWhenMatcher = getMatchingWhenMatcher(args);
+          if (matchingWhenMatcher) {
+            matchingWhenMatcher.returnValue = value;
+          } else {
+            spy.jasmine_mock__whenMatchers.push(whenMatcher(args, value));
+          }
         }
       };
     }
@@ -136,3 +147,8 @@ var argThat = function (matchFunction) {
   };
 };
 
+module.exports = {
+  mock: mock,
+  when: when,
+  argThat: argThat
+};
