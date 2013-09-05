@@ -2,7 +2,7 @@
   "name": "jasmine-mocks",
   "description": "Tiny mock library for Jasmine",
   "version": "0.0.2",
-  "main": "dist/jasmine-mocks-node.js",
+  "main": "src/jasmine-mocks.js",
   "dependencies": {
     "jasmine-node": "1.7.1"
   },
