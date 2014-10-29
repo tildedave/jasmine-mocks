@@ -1,3 +1,5 @@
+** DO NOT USE THIS, USE [SINON](http://sinonjs.org/) INSTEAD **
+
 An experiment to add mock objects to JavaScript with Jasmine spies.  This is
 probably only useful for you if you program in 'object-oriented' JavaScript,
 i.e. define functions as constructors and then define methods as function
