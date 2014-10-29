@@ -1,0 +1,10 @@
+{
+  "name": "jasmine-mocks",
+  "version": "0.0.2",
+  "main": "src/jasmine-mocks.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}

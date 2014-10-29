@@ -117,6 +117,15 @@ describe('when', function () {
 
     expect(instance.foo("one", "three")).toBeUndefined();
   });
+
+  it('rewrite the return value if the same arguments are used', function () {
+   var instance = mock(Clazz);
+
+   when(instance.foo).isCalledWith("monkey").thenReturn("apple");
+   when(instance.foo).isCalledWith("monkey").thenReturn("pear");
+
+   expect(instance.foo("monkey")).toBe("pear");
+  });
 });
 
 var argThat = require('../src/jasmine-mocks.js').argThat;
@@ -141,7 +150,6 @@ describe('argThat', function () {
     expect(instance.foo(3)).toBe(undefined);
   });
 });
-
 
 
 

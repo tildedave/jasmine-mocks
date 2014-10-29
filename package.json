@@ -4,6 +4,6 @@
   "version": "0.0.2",
   "main": "src/jasmine-mocks.js",
   "dependencies": {
-    "jasmine-node": "1.0.23"
+    "jasmine-node": "1.7.1"
   }
 }
